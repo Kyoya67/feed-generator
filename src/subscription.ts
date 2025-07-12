@@ -20,9 +20,17 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     const postsToDelete = ops.posts.deletes.map((del) => del.uri)
     const postsToCreate = ops.posts.creates
       .filter((create) => {
-        // only REALITY-related posts
-        const text = create.record.text.toLowerCase()
-        return text.includes('reality')
+        // #REALITY hashtag with Japanese text
+        const text = create.record.text
+        const lowerText = text.toLowerCase()
+
+        // Check for #REALITY hashtag
+        const hasRealityHashtag = lowerText.includes('#reality')
+
+        // Check for Japanese characters (hiragana, katakana, kanji)
+        const hasJapanese = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(text)
+
+        return hasRealityHashtag && hasJapanese
       })
       .map((create) => {
         // map REALITY-related posts to a db row
