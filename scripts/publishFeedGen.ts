@@ -11,7 +11,17 @@ const run = async () => {
     throw new Error('Please provide a hostname in the .env file')
   }
 
-  const answers = await inquirer
+  // Read from environment variables if available, otherwise prompt
+  const answers = process.env.BLUESKY_HANDLE ? {
+    handle: process.env.BLUESKY_HANDLE,
+    password: process.env.BLUESKY_PASSWORD,
+    service: process.env.BLUESKY_SERVICE || 'https://bsky.social',
+    recordName: process.env.FEED_RECORD_NAME,
+    displayName: process.env.FEED_DISPLAY_NAME,
+    description: process.env.FEED_DESCRIPTION,
+    avatar: process.env.FEED_AVATAR,
+    videoOnly: process.env.FEED_VIDEO_ONLY === 'true'
+  } : await inquirer
     .prompt([
       {
         type: 'input',
